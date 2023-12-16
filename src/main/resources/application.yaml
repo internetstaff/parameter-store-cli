@@ -1,0 +1,8 @@
+spring:
+  main:
+    banner-mode: off
+  shell:
+    interactive:
+      enabled: true
+    script:
+      enabled: false
