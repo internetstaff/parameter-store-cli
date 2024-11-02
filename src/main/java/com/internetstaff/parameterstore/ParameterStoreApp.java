@@ -19,4 +19,5 @@ class ParameterStoreApp {
   SsmClient ssmClient() {
     return SsmClient.create();
   }
+
 }

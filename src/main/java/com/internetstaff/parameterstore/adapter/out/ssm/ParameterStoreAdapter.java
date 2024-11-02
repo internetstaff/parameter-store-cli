@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.*;
 
@@ -46,6 +47,23 @@ class ParameterStoreAdapter implements ParameterStore {
   }
 
   @Override
+  public void createParameter(String name, String value, String parameterType) {
+    var type = ParameterType.fromValue(parameterType);
+
+    Assert.notNull(type, "Parameter type missing.");
+    Assert.state(type != ParameterType.UNKNOWN_TO_SDK_VERSION, "Parameter type invalid.");
+
+    var putRequest = PutParameterRequest.builder()
+        .name(name)
+        .value(value)
+        .type(type)
+        .tier(ParameterTier.INTELLIGENT_TIERING)
+        .build();
+
+    ssmClient.putParameter(putRequest);
+  }
+
+  @Override
   public boolean copyParameter(String source, String destination) {
     var getRequest = GetParameterRequest.builder()
         .name(source)
@@ -55,14 +73,8 @@ class ParameterStoreAdapter implements ParameterStore {
     try {
       var parameter = ssmClient.getParameter(getRequest).parameter();
 
-      var putRequest = PutParameterRequest.builder()
-          .name(destination)
-          .value(parameter.value())
-          .type(parameter.type())
-          .tier(ParameterTier.INTELLIGENT_TIERING)
-          .build();
+      createParameter(destination, parameter.value(), parameter.type().toString());
 
-      ssmClient.putParameter(putRequest);
     } catch (ParameterNotFoundException e) {
       return false;
     }

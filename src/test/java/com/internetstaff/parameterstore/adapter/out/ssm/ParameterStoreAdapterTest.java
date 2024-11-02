@@ -12,9 +12,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
-import software.amazon.awssdk.services.ssm.model.ParameterTier;
-import software.amazon.awssdk.services.ssm.model.ParameterType;
-import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
+import software.amazon.awssdk.services.ssm.model.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -77,11 +75,11 @@ class ParameterStoreAdapterTest {
         .usingRecursiveFieldByFieldElementComparatorIgnoringFields("lastModifiedDate")
         .containsExactlyInAnyOrderElementsOf(metadata);
 
-    actual = parameterStoreAdapter.getParameters(metadata.get(0).name());
+    actual = parameterStoreAdapter.getParameters(metadata.getFirst().name());
 
     assertThat(actual)
         .usingRecursiveFieldByFieldElementComparatorIgnoringFields("lastModifiedDate")
-        .containsExactly(metadata.get(0));
+        .containsExactly(metadata.getFirst());
   }
 
   @Test
@@ -125,6 +123,32 @@ class ParameterStoreAdapterTest {
 
     assertThat(newParameter).get().usingRecursiveComparison()
         .ignoringFieldsOfTypes(Instant.class)
+        .isEqualTo(expected);
+  }
+
+  @Test
+  void createParameter() {
+    var name = RandomStringUtils.randomAlphabetic(24);
+    var value = RandomStringUtils.randomAlphabetic(24);
+
+    parameterStoreAdapter.createParameter(name, value, "SecureString");
+
+    var actual = ssmClient.getParameter(GetParameterRequest.builder()
+            .name(name)
+            .withDecryption(true)
+            .build())
+        .parameter();
+
+    var expected = Parameter.builder()
+        .name(name)
+        .value(value)
+        .version(1L)
+        .dataType("text")
+        .type(ParameterType.SECURE_STRING)
+        .build();
+
+    assertThat(actual).usingRecursiveComparison()
+        .ignoringFields("lastModifiedDate", "arn")
         .isEqualTo(expected);
   }
 

@@ -12,6 +12,8 @@ public interface ParameterStore {
 
   List<Metadata> getParameters(String glob);
 
+  void createParameter(String name, String value, String type);
+
   boolean copyParameter(String source, String destination);
 
   boolean deleteParameter(String name);

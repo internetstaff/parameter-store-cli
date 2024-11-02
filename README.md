@@ -8,11 +8,11 @@ the batches for review and pasted the scripts into the tool.
 
 ## Commands
 
-* cat <name>
-* cp <source> <destination>
-* ls <glob>
-* mv <source> <destination>
-* rm <name>
+* `cat <name>`
+* `cp <source> <destination>`
+* `ls <glob>`
+* `mv <source> <destination>`
+* `rm <name>`
 
 ## Setup
 
@@ -21,6 +21,8 @@ Setup is currently external to the tool. Use AWS environment variables such as A
 ## Run
 
 It's thus far mostly been used straight from Intellij while iterating on development. See notes below for caveats.
+
+It can easily be run via Maven:
 
 ```shell
 AWS_PROFILE=myprofile ./mvnw spring-boot:run
