@@ -1,9 +1,14 @@
 package com.internetstaff.parameterstore.adapter.out.ssm;
 
+import com.internetstaff.parameterstore.application.port.in.GetCurrentDirectoryUseCase;
 import com.internetstaff.parameterstore.application.port.out.ParameterStore;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -19,23 +24,26 @@ import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
 @Testcontainers
+@ExtendWith(MockitoExtension.class)
 class ParameterStoreAdapterTest {
   @Container
   static LocalStackContainer localStackContainer =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.5"))
+      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3"))
           .withServices(LocalStackContainer.Service.SSM);
 
-  private final SsmClient ssmClient = SsmClient.builder()
+  @Spy
+  private SsmClient ssmClient = SsmClient.builder()
       .endpointOverride(localStackContainer.getEndpoint())
       .credentialsProvider(StaticCredentialsProvider.create(
           AwsBasicCredentials.create(localStackContainer.getAccessKey(), localStackContainer.getSecretKey())
       ))
       .region(Region.of(localStackContainer.getRegion()))
       .build();
-
-  private final ParameterStoreAdapter parameterStoreAdapter = new ParameterStoreAdapter(ssmClient);
+  @Mock
+  private GetCurrentDirectoryUseCase currentDirectoryUseCase;
+  @InjectMocks
+  private ParameterStoreAdapter parameterStoreAdapter;
 
   private void createTestParameter(String name, String value) {
     ssmClient.putParameter(PutParameterRequest.builder()

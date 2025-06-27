@@ -9,7 +9,6 @@ import org.springframework.shell.standard.AbstractShellComponent;
 import software.amazon.awssdk.services.ssm.model.ParameterType;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,9 +20,9 @@ class Create extends AbstractShellComponent {
 
   @Command(description = "Create Parameter", group = "Parameter Store")
   public void create(
-      @Option ParameterType type,
       @Option String name,
-      @Option String value
+      @Option String value,
+      @Option String type
   ) {
     var paramName = Optional.ofNullable(name)
         .orElseGet(() -> promptingService.prompt("Parameter name: "));
@@ -32,10 +31,13 @@ class Create extends AbstractShellComponent {
         .orElseGet(() -> promptingService.prompt("Parameter value: "));
 
     var paramType = Optional.ofNullable(type)
-        .orElseGet(() -> promptingService.select("Parameter type: ", ParameterType.knownValues().stream()
-            .collect(Collectors.toMap(ParameterType::name, Function.identity()))));
+        .orElseGet(() -> promptingService.select("Parameter type: ",
+            ParameterType.knownValues().stream()
+                .collect(Collectors.toMap(ParameterType::toString, ParameterType::toString))));
 
-    terminal.writer().println("type: %s name: %s value:%s type:%s".formatted(type, paramName, paramValue, paramType));
+    terminal.writer().println("Creating type: %s name: %s value:%s type:%s".formatted(paramType, paramName, paramValue, paramType));
+
+    parameterStore.createParameter(paramName, paramValue, paramType);
   }
 
 }

@@ -23,4 +23,18 @@ class CurrentDirectoryServiceTest {
 
     assertThat(currentDirectoryService.getCurrentDirectory()).isEqualTo(expectedDir);
   }
+
+  @ParameterizedTest
+  @CsvSource({
+      "'',testfile,/testfile",
+      "/testdir,testfile,/testdir/testfile",
+      "/testdir,../testfile,/testfile"
+  })
+  void testQualifyName(String currentDirectory, String name, String expectedName) {
+    var currentDirectoryService = new CurrentDirectoryService(currentDirectory);
+
+    var actual = currentDirectoryService.qualifyName(name);
+    assertThat(actual).isEqualTo(expectedName);
+  }
+
 }

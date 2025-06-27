@@ -13,23 +13,36 @@ import java.nio.file.Path;
 @AllArgsConstructor
 @NoArgsConstructor
 class CurrentDirectoryService implements GetCurrentDirectoryUseCase, SetCurrentDirectoryUseCase {
-  private static final String ROOT_DIRECTORY = "/";
+  private static final String DIRECTORY_SEPARATOR = "/";
 
-  private String currentDirectory = ROOT_DIRECTORY;
+  private String currentDirectory = DIRECTORY_SEPARATOR;
 
   @Override
   public String getCurrentDirectory() {
     return currentDirectory;
   }
 
+  private String normalize(String path) {
+    return Path.of(path).normalize().toString();
+  }
+
+  @Override
+  public String qualifyName(String name) {
+    if (StringUtils.startsWith(name, "/")) {
+      return name;
+    } else {
+      return normalize(currentDirectory + DIRECTORY_SEPARATOR + name);
+    }
+  }
+
   @Override
   public void setCurrentDirectory(String newDirectory) {
     if (StringUtils.isBlank(newDirectory)) {
-      currentDirectory = ROOT_DIRECTORY;
-    } else if (StringUtils.startsWith(newDirectory, "/")) {
-      currentDirectory = Path.of(newDirectory).normalize().toString();
+      currentDirectory = DIRECTORY_SEPARATOR;
+    } else if (StringUtils.startsWith(newDirectory, DIRECTORY_SEPARATOR)) {
+      currentDirectory = normalize(newDirectory);
     } else {
-      currentDirectory = Path.of(this.currentDirectory + "/" + newDirectory).normalize().toString();
+      currentDirectory = normalize(this.currentDirectory + DIRECTORY_SEPARATOR + newDirectory);
     }
   }
 }

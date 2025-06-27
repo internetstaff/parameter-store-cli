@@ -1,5 +1,6 @@
 package com.internetstaff.parameterstore.adapter.out.ssm;
 
+import com.internetstaff.parameterstore.application.port.in.GetCurrentDirectoryUseCase;
 import com.internetstaff.parameterstore.application.port.out.ParameterStore;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -18,10 +19,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 class ParameterStoreAdapter implements ParameterStore {
   private final SsmClient ssmClient;
+  private final GetCurrentDirectoryUseCase currentDirectoryUseCase;
 
   @Override
   public List<Metadata> getParameters(String glob) {
     var request = DescribeParametersRequest.builder()
+        .parameterFilters(ParameterStringFilter.builder()
+            .key("Path")
+            .values(currentDirectoryUseCase.getCurrentDirectory())
+            .option("Recursive")
+            .build())
         .build();
 
     var result = new ArrayList<ParameterMetadata>();
@@ -54,7 +61,7 @@ class ParameterStoreAdapter implements ParameterStore {
     Assert.state(type != ParameterType.UNKNOWN_TO_SDK_VERSION, "Parameter type invalid.");
 
     var putRequest = PutParameterRequest.builder()
-        .name(name)
+        .name(currentDirectoryUseCase.qualifyName(name))
         .value(value)
         .type(type)
         .tier(ParameterTier.INTELLIGENT_TIERING)
@@ -66,14 +73,16 @@ class ParameterStoreAdapter implements ParameterStore {
   @Override
   public boolean copyParameter(String source, String destination) {
     var getRequest = GetParameterRequest.builder()
-        .name(source)
+        .name(currentDirectoryUseCase.qualifyName(source))
         .withDecryption(true)
         .build();
+
+    // fixup destination if ending in / ?
 
     try {
       var parameter = ssmClient.getParameter(getRequest).parameter();
 
-      createParameter(destination, parameter.value(), parameter.type().toString());
+      createParameter(currentDirectoryUseCase.qualifyName(destination), parameter.value(), parameter.type().toString());
 
     } catch (ParameterNotFoundException e) {
       return false;
@@ -85,7 +94,7 @@ class ParameterStoreAdapter implements ParameterStore {
   @Override
   public Optional<Parameter> getParameter(String name) {
     var request = GetParameterRequest.builder()
-        .name(name)
+        .name(currentDirectoryUseCase.qualifyName(name))
         .withDecryption(true)
         .build();
 
@@ -106,7 +115,7 @@ class ParameterStoreAdapter implements ParameterStore {
   @Override
   public boolean deleteParameter(String name) {
     var deleteRequest = DeleteParameterRequest.builder()
-        .name(name)
+        .name(currentDirectoryUseCase.qualifyName(name))
         .build();
 
     try {
