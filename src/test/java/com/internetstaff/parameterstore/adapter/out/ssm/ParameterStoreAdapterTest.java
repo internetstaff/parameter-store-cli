@@ -3,6 +3,7 @@ package com.internetstaff.parameterstore.adapter.out.ssm;
 import com.internetstaff.parameterstore.application.port.in.GetCurrentDirectoryUseCase;
 import com.internetstaff.parameterstore.application.port.out.ParameterStore;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,18 +24,20 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 
 @Testcontainers
 @ExtendWith(MockitoExtension.class)
 class ParameterStoreAdapterTest {
   @Container
   static LocalStackContainer localStackContainer =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3"))
-          .withServices(LocalStackContainer.Service.SSM);
+      new LocalStackContainer(DockerImageName.parse("localstack/localstack:4"))
+          .withServices(LocalStackContainer.Service.SSM, LocalStackContainer.Service.KMS);
 
   @Spy
   private SsmClient ssmClient = SsmClient.builder()
-      .endpointOverride(localStackContainer.getEndpoint())
+      .endpointOverride(localStackContainer.getEndpointOverride(LocalStackContainer.Service.SSM))
       .credentialsProvider(StaticCredentialsProvider.create(
           AwsBasicCredentials.create(localStackContainer.getAccessKey(), localStackContainer.getSecretKey())
       ))
@@ -45,9 +48,19 @@ class ParameterStoreAdapterTest {
   @InjectMocks
   private ParameterStoreAdapter parameterStoreAdapter;
 
+  private static String q(String name) {
+    return name.startsWith("/") ? name : "/" + name;
+  }
+
+  @BeforeEach
+  void setUp() {
+    lenient().when(currentDirectoryUseCase.getCurrentDirectory()).thenReturn("/");
+    lenient().when(currentDirectoryUseCase.qualifyName(anyString())).thenAnswer(inv -> inv.getArgument(0, String.class));
+  }
+
   private void createTestParameter(String name, String value) {
     ssmClient.putParameter(PutParameterRequest.builder()
-        .name(name)
+        .name(q(name))
         .value(value)
         .type(ParameterType.SECURE_STRING)
         .tier(ParameterTier.INTELLIGENT_TIERING)
@@ -56,12 +69,12 @@ class ParameterStoreAdapterTest {
 
   @Test
   void getParameterMissing() {
-    assertThat(parameterStoreAdapter.getParameter("Does Not Exist")).isEmpty();
+    assertThat(parameterStoreAdapter.getParameter(q("Does Not Exist"))).isEmpty();
   }
 
   @Test
   void getParametersNoMatch() {
-    var actual = parameterStoreAdapter.getParameters(RandomStringUtils.randomAlphabetic(32));
+    var actual = parameterStoreAdapter.getParameters(RandomStringUtils.insecure().nextAlphabetic(32));
     assertThat(actual).isEmpty();
   }
 
@@ -71,10 +84,10 @@ class ParameterStoreAdapterTest {
 
     for (int i = 0; i < 10; i++) {
       metadata.add(ParameterStore.Metadata.builder()
-          .name(RandomStringUtils.randomAlphabetic(24))
+          .name(RandomStringUtils.insecure().nextAlphabetic(24))
           .build());
 
-      createTestParameter(metadata.get(i).name(), RandomStringUtils.randomAlphabetic(24));
+      createTestParameter(metadata.get(i).name(), RandomStringUtils.insecure().nextAlphabetic(24));
     }
 
     var actual = parameterStoreAdapter.getParameters("");
@@ -92,8 +105,8 @@ class ParameterStoreAdapterTest {
 
   @Test
   void getParameter() {
-    var name = RandomStringUtils.randomAlphabetic(24);
-    var value = RandomStringUtils.randomAlphabetic(24);
+    var name = q(RandomStringUtils.insecure().nextAlphabetic(24));
+    var value = RandomStringUtils.insecure().nextAlphabetic(24);
 
     createTestParameter(name, value);
 
@@ -110,12 +123,12 @@ class ParameterStoreAdapterTest {
 
   @Test
   void copyParameter() {
-    var name = RandomStringUtils.randomAlphabetic(24);
-    var value = RandomStringUtils.randomAlphabetic(24);
+    var name = q(RandomStringUtils.insecure().nextAlphabetic(24));
+    var value = RandomStringUtils.insecure().nextAlphabetic(24);
 
     createTestParameter(name, value);
 
-    var newName = RandomStringUtils.randomAlphabetic(24);
+    var newName = q(RandomStringUtils.insecure().nextAlphabetic(24));
 
     var actual = parameterStoreAdapter.copyParameter(name, newName);
 
@@ -136,13 +149,13 @@ class ParameterStoreAdapterTest {
 
   @Test
   void createParameter() {
-    var name = RandomStringUtils.randomAlphabetic(24);
-    var value = RandomStringUtils.randomAlphabetic(24);
+    var name = q(RandomStringUtils.insecure().nextAlphabetic(24));
+    var value = RandomStringUtils.insecure().nextAlphabetic(24);
 
     parameterStoreAdapter.createParameter(name, value, "SecureString");
 
     var actual = ssmClient.getParameter(GetParameterRequest.builder()
-            .name(name)
+            .name(q(name))
             .withDecryption(true)
             .build())
         .parameter();
@@ -162,8 +175,8 @@ class ParameterStoreAdapterTest {
 
   @Test
   void deleteParameter() {
-    var name = RandomStringUtils.randomAlphabetic(24);
-    var value = RandomStringUtils.randomAlphabetic(24);
+    var name = q(RandomStringUtils.insecure().nextAlphabetic(24));
+    var value = RandomStringUtils.insecure().nextAlphabetic(24);
 
     createTestParameter(name, value);
 
