@@ -12,12 +12,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.1</version>
+        <version>3.5.7</version>
     </parent>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <aws.sdk.verrsion>2.38.7</aws.sdk.verrsion>
     </properties>
 
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
+            <version>3.19.0</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.springframework.shell</groupId>
             <artifactId>spring-shell-starter</artifactId>
-            <version>3.4.0</version>
+            <version>3.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -75,7 +75,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.5.7</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
