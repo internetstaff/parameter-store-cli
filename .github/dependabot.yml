@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Keep Maven dependencies (including plugins) up to date
+  # Maven dependencies
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
@@ -12,8 +12,13 @@ updates:
     labels:
       - "dependencies"
       - "maven"
+    groups:
+      all-maven:
+        applies-to: version-updates
+        patterns:
+          - "*"
 
-  # Keep GitHub Actions used in workflows up to date
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -25,3 +30,8 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    groups:
+      all-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"
