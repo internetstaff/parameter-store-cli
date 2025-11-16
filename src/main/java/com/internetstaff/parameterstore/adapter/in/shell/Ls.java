@@ -11,7 +11,7 @@ import java.util.Comparator;
 
 @Command
 @RequiredArgsConstructor
-class List {
+class Ls {
   private final ParameterStore parameterStore;
 
   private int maxLength(java.util.List<Metadata> parameters) {

@@ -148,6 +148,40 @@ class ParameterStoreAdapterTest {
   }
 
   @Test
+  void copyParameter_doesNotDoubleQualifyDestination() {
+    // Simulate being in a non-root current directory and realistic qualifyName behavior
+    var base = "/current";
+    lenient().when(currentDirectoryUseCase.getCurrentDirectory()).thenReturn(base);
+    lenient().when(currentDirectoryUseCase.qualifyName(anyString())).thenAnswer(inv -> {
+      var name = inv.getArgument(0, String.class);
+      return name.startsWith("/") ? name : base + "/" + name;
+    });
+
+    var src = "src-param-" + RandomStringUtils.insecure().nextAlphabetic(8);
+    var dst = "dst-param-" + RandomStringUtils.insecure().nextAlphabetic(8);
+    var value = RandomStringUtils.insecure().nextAlphabetic(16);
+
+    // Create the source parameter using relative name (should be stored under /current/src)
+    parameterStoreAdapter.createParameter(src, value, "SecureString");
+
+    // Perform copy using relative destination (should land at /current/dst, not /current/current/dst)
+    var copied = parameterStoreAdapter.copyParameter(src, dst);
+    assertThat(copied).isTrue();
+
+    var expectedQualifiedDst = base + "/" + dst;
+    var wrongDoublyQualifiedDst = base + base + "/" + dst;
+
+    // Verify the correctly qualified destination exists with the expected value
+    assertThat(parameterStoreAdapter.getParameter(expectedQualifiedDst))
+        .get()
+        .extracting(ParameterStore.Parameter::value)
+        .isEqualTo(value);
+
+    // And verify there is no parameter at a doubly-qualified path
+    assertThat(parameterStoreAdapter.getParameter(wrongDoublyQualifiedDst)).isEmpty();
+  }
+
+  @Test
   void createParameter() {
     var name = q(RandomStringUtils.insecure().nextAlphabetic(24));
     var value = RandomStringUtils.insecure().nextAlphabetic(24);

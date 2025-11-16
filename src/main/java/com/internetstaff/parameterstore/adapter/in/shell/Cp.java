@@ -7,7 +7,7 @@ import org.springframework.shell.command.annotation.Option;
 
 @Command
 @RequiredArgsConstructor
-class Copy {
+class Cp {
   private final ParameterStore parameterStore;
 
   @Command(description = "Copy Parameter", group = "Parameter Store")

@@ -17,9 +17,21 @@
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
-        <lombok.version>1.18.42</lombok.version>
-        <aws.sdk.verrsion>2.38.7</aws.sdk.verrsion>
+        <lombok.version>1.18.38</lombok.version>
+        <aws.sdk.version>2.38.7</aws.sdk.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -36,7 +48,6 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>ssm</artifactId>
-            <version>${aws.sdk.verrsion}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -47,7 +58,6 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sso</artifactId>
-            <version>${aws.sdk.verrsion}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.shell</groupId>
