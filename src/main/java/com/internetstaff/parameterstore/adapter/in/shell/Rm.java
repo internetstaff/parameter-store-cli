@@ -4,11 +4,10 @@ import com.internetstaff.parameterstore.application.port.out.ParameterStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.AbstractShellComponent;
 
 @Command
 @RequiredArgsConstructor
-class Remove extends AbstractShellComponent {
+class Rm {
   private final ParameterStore parameterStore;
 
   @Command(description = "Remove parameter", group = "Parameter Store")

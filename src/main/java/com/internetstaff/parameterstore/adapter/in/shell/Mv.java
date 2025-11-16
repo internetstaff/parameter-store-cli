@@ -7,7 +7,7 @@ import org.springframework.shell.command.annotation.Option;
 
 @Command
 @RequiredArgsConstructor
-class Move {
+class Mv {
   private final ParameterStore parameterStore;
 
   @Command(description = "Move Parameter", group = "Parameter Store")

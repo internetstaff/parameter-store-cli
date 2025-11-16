@@ -11,7 +11,7 @@ public class Cd {
   private final SetCurrentDirectoryUseCase setCurrentDirectoryUseCase;
 
   @Command(description = "Change directory", group = "Parameter Store")
-  public void Cd(
+  public void cd(
       @Option(description = "Path") String path
   ) {
     setCurrentDirectoryUseCase.setCurrentDirectory(path);

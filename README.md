@@ -2,9 +2,14 @@
 
 This is a Spring Shell tool that allows managing AWS Parameter Store with simple Posix-like commands.
 
-It is currently rudimentary; this was written specifically to facilitate a mass-migration of parameters from one 
+It is currently rudimentary; this was written specifically to facilitate a mass-migration of parameters from one
 path layout to another using a "copy, deploy updated application, delete" flow in batches. For this, we scripted
 the batches for review and pasted the scripts into the tool.
+
+# Warning
+
+Use at your own risk! While I have used this intensively, several times for production migrations, it's not currently
+under daily use nor covered by exhaustive tests. A great contribution would be adding backup and restore. 😁
 
 ## Commands
 
@@ -33,16 +38,16 @@ AWS_PROFILE=myprofile ./mvnw spring-boot:run
 This project suffers from well-known problems with Intellij's terminal and jline. Most notably, normal
 input controls don't work, and tab completion is broken: https://youtrack.jetbrains.com/issue/IDEA-183619
 
-`rm` supports -f / --force, but Spring Shell doesn't seem to be able to handle a boolean flag without args combined with 
-standalone args, so one has to specify `rm -f true <param>`.   
-
+`rm` supports -f / --force, but Spring Shell doesn't seem to be able to handle a boolean flag without args combined with
+standalone args, so one has to specify `rm -f true <param>`.
 
 ## TODO
+
 * allow cp/mv to overwrite with confirmation
 * cd
 * create
 * ed
 * tab completion for parameters
-* caching (only practical way to do tab completion)
+* caching (tab completion performance?)
 * release artifact
 * backup / restore
