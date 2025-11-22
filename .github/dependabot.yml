@@ -13,8 +13,17 @@ updates:
       - "dependencies"
       - "maven"
     groups:
-      all-maven:
+      maven-minor-and-patch:
         applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
+      maven-major:
+        applies-to: version-updates
+        update-types:
+          - "major"
         patterns:
           - "*"
 
@@ -31,7 +40,16 @@ updates:
       - "dependencies"
       - "github-actions"
     groups:
-      all-actions:
+      actions-minor-and-patch:
         applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
+      actions-major:
+        applies-to: version-updates
+        update-types:
+          - "major"
         patterns:
           - "*"
