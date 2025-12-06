@@ -18,7 +18,7 @@
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <lombok.version>1.18.42</lombok.version>
-        <aws.sdk.version>2.39.5</aws.sdk.version>
+        <aws.sdk.version>2.40.3</aws.sdk.version>
     </properties>
 
     <dependencyManagement>
