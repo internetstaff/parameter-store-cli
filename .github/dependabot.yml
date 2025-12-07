@@ -1,12 +1,12 @@
 version: 2
 updates:
-  # Maven dependencies
   - package-ecosystem: "maven"
     directory: "/"
+    rebase-strategy: "auto"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "saturday"
-      time: "04:00"
+      time: "10:00"
       timezone: "UTC"
     open-pull-requests-limit: 10
     labels:
@@ -27,13 +27,13 @@ updates:
         patterns:
           - "*"
 
-  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    rebase-strategy: "auto"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "saturday"
-      time: "04:30"
+      time: "10:30"
       timezone: "UTC"
     open-pull-requests-limit: 10
     labels:
