@@ -22,6 +22,17 @@ class CurrentDirectoryService implements GetCurrentDirectoryUseCase, SetCurrentD
     return currentDirectory;
   }
 
+  @Override
+  public void setCurrentDirectory(String newDirectory) {
+    if (StringUtils.isBlank(newDirectory)) {
+      currentDirectory = DIRECTORY_SEPARATOR;
+    } else if (StringUtils.startsWith(newDirectory, DIRECTORY_SEPARATOR)) {
+      currentDirectory = normalize(newDirectory);
+    } else {
+      currentDirectory = normalize(this.currentDirectory + DIRECTORY_SEPARATOR + newDirectory);
+    }
+  }
+
   private String normalize(String path) {
     return Path.of(path).normalize().toString();
   }
@@ -36,13 +47,14 @@ class CurrentDirectoryService implements GetCurrentDirectoryUseCase, SetCurrentD
   }
 
   @Override
-  public void setCurrentDirectory(String newDirectory) {
-    if (StringUtils.isBlank(newDirectory)) {
-      currentDirectory = DIRECTORY_SEPARATOR;
-    } else if (StringUtils.startsWith(newDirectory, DIRECTORY_SEPARATOR)) {
-      currentDirectory = normalize(newDirectory);
-    } else {
-      currentDirectory = normalize(this.currentDirectory + DIRECTORY_SEPARATOR + newDirectory);
+  public String baseName(String name) {
+    if (StringUtils.startsWith(name, currentDirectory)) {
+      String stripped = StringUtils.removeStart(name, currentDirectory);
+      if (StringUtils.startsWith(stripped, DIRECTORY_SEPARATOR)) {
+        return StringUtils.removeStart(stripped, DIRECTORY_SEPARATOR);
+      }
+      return stripped;
     }
+    return name;
   }
 }

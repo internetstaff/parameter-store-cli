@@ -4,4 +4,6 @@ public interface GetCurrentDirectoryUseCase {
   String getCurrentDirectory();
 
   String qualifyName(String name);
+
+  String baseName(String name);
 }

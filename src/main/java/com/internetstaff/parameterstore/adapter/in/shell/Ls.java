@@ -1,19 +1,23 @@
 package com.internetstaff.parameterstore.adapter.in.shell;
 
+import com.internetstaff.parameterstore.application.port.in.GetCurrentDirectoryUseCase;
 import com.internetstaff.parameterstore.application.port.out.ParameterStore;
 import com.internetstaff.parameterstore.application.port.out.ParameterStore.Metadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 
-@Command
+@Component
 @RequiredArgsConstructor
 class Ls {
   private final ParameterStore parameterStore;
+  private final GetCurrentDirectoryUseCase getCurrentDirectoryUseCase;
 
+  // Method to do this in Spring Shell?
   private int maxLength(java.util.List<Metadata> parameters) {
     return parameters.stream()
         .map(Metadata::name)
@@ -24,7 +28,7 @@ class Ls {
 
   @Command(description = "List parameters", group = "Parameter Store")
   public String ls(
-      @Option(defaultValue = "*", description = "Glob pattern") String path
+      @Argument(index = 0, defaultValue = "*", description = "Glob pattern") String path
   ) {
 
     var parameters = parameterStore.getParameters(path);
@@ -33,7 +37,7 @@ class Ls {
     var result = new StringBuilder();
 
     for (var parameter : parameters) {
-      result.append(StringUtils.rightPad(parameter.name(), len))
+      result.append(StringUtils.rightPad(getCurrentDirectoryUseCase.baseName(parameter.name()), len))
           .append(" ")
           .append(parameter.lastModifiedDate())
           .append("\n");

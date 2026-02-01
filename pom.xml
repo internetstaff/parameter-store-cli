@@ -12,13 +12,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>4.0.2</version>
     </parent>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <lombok.version>1.18.42</lombok.version>
-        <aws.sdk.version>2.41.0</aws.sdk.version>
+        <aws.sdk.version>2.41.19</aws.sdk.version>
+        <spring-shell.version>4.0.1</spring-shell.version>
     </properties>
 
     <dependencyManagement>
@@ -61,21 +62,37 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.shell</groupId>
-            <artifactId>spring-shell-starter</artifactId>
-            <version>3.4.1</version>
+            <artifactId>spring-shell-starter-ffm</artifactId>
+            <version>${spring-shell.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.21.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell-test-autoconfigure</artifactId>
+            <version>${spring-shell.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>localstack</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-localstack</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
