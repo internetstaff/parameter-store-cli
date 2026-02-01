@@ -26,7 +26,6 @@ class CurrentDirectoryServiceTest {
 
   @ParameterizedTest
   @CsvSource({
-      "'',testfile,/testfile",
       "/testdir,testfile,/testdir/testfile",
       "/testdir,../testfile,/testfile"
   })
@@ -37,4 +36,17 @@ class CurrentDirectoryServiceTest {
     assertThat(actual).isEqualTo(expectedName);
   }
 
+  @ParameterizedTest
+  @CsvSource({
+      "/testdir, /testdir/testfile, testfile",
+      "/testdir, /testdir/subdir/testfile, subdir/testfile",
+      "/, /testfile, testfile",
+      "/testdir, /otherdir/testfile, /otherdir/testfile"
+  })
+  void testBaseName(String currentDirectory, String name, String expectedBaseName) {
+    var currentDirectoryService = new CurrentDirectoryService(currentDirectory);
+
+    var actual = currentDirectoryService.baseName(name);
+    assertThat(actual).isEqualTo(expectedBaseName);
+  }
 }

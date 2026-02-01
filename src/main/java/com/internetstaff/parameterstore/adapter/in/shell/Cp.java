@@ -2,18 +2,19 @@ package com.internetstaff.parameterstore.adapter.in.shell;
 
 import com.internetstaff.parameterstore.application.port.out.ParameterStore;
 import lombok.RequiredArgsConstructor;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.stereotype.Component;
 
-@Command
+@Component
 @RequiredArgsConstructor
 class Cp {
   private final ParameterStore parameterStore;
 
   @Command(description = "Copy Parameter", group = "Parameter Store")
   public String cp(
-      @Option(description = "Full path of source parameter") String source,
-      @Option(description = "Full path of destination parameter") String destination
+      @Argument(index = 0, description = "Full path of source parameter") String source,
+      @Argument(index = 1, description = "Full path of destination parameter") String destination
   ) {
 
     if (parameterStore.copyParameter(source, destination)) {

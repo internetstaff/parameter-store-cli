@@ -3,12 +3,13 @@ package com.internetstaff.parameterstore.adapter.in.shell;
 import lombok.RequiredArgsConstructor;
 import org.jline.terminal.Terminal;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.shell.component.SingleItemSelector;
-import org.springframework.shell.component.StringInput;
-import org.springframework.shell.component.support.SelectorItem;
-import org.springframework.shell.style.TemplateExecutor;
+import org.springframework.shell.jline.tui.component.SingleItemSelector;
+import org.springframework.shell.jline.tui.component.StringInput;
+import org.springframework.shell.jline.tui.component.support.SelectorItem;
+import org.springframework.shell.jline.tui.style.TemplateExecutor;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Component
@@ -41,6 +42,20 @@ class OptionPrompter {
         .getResultItem()
         .map(SelectorItem::getItem)
         .orElse(null);
+  }
+
+  public boolean confirm(String message) {
+    terminal.writer().print("%s [y/N] ".formatted(message));
+    terminal.writer().flush();
+
+    try {
+      int ch = terminal.reader().read();
+      terminal.writer().println();
+      terminal.writer().flush();
+      return ch == 'y' || ch == 'Y';
+    } catch (IOException e) {
+      return false;
+    }
   }
 
 }

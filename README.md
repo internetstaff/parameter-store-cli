@@ -38,8 +38,9 @@ AWS_PROFILE=myprofile ./mvnw spring-boot:run
 This project suffers from well-known problems with Intellij's terminal and jline. Most notably, normal
 input controls don't work, and tab completion is broken: https://youtrack.jetbrains.com/issue/IDEA-183619
 
-`rm` supports -f / --force, but Spring Shell doesn't seem to be able to handle a boolean flag without args combined with
-standalone args, so one has to specify `rm -f true <param>`.
+`rm` supports -f / --force, but Spring Shell doesn't seem to be able to handle a boolean flag without an arg except at
+the end of the command line. Example: `rm foo --force` works, but `rm --force foo` doesn't.
+See: https://github.com/spring-projects/spring-shell/issues/1262
 
 ## TODO
 
