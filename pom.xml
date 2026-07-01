@@ -12,14 +12,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.0</version>
     </parent>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <lombok.version>1.18.46</lombok.version>
-        <aws.sdk.version>2.46.0</aws.sdk.version>
-        <spring-shell.version>4.0.2</spring-shell.version>
+        <aws.sdk.version>2.46.19</aws.sdk.version>
+        <spring-shell.version>4.0.3</spring-shell.version>
     </properties>
 
     <dependencyManagement>
@@ -102,7 +102,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>4.0.6</version>
+                <version>4.1.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
