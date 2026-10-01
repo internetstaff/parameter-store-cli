@@ -17,8 +17,8 @@
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
-        <lombok.version>1.18.46</lombok.version>
-        <aws.sdk.version>2.54.7</aws.sdk.version>
+        <lombok.version>1.18.48</lombok.version>
+        <aws.sdk.version>2.55.6</aws.sdk.version>
         <spring-shell.version>4.0.3</spring-shell.version>
     </properties>
 
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.20.0</version>
+            <version>3.21.0</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
